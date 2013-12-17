@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F567F7A9-433F-43FB-B3A8-44E4DBD7538E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Labo.Common.Ioc.Tests</RootNamespace>
+    <AssemblyName>Labo.Common.Ioc.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Labo.Common, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Labo.Commons.0.1.1\lib\Labo.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutofacContainerTestFixture.cs" />
+    <Compile Include="DynamoContainerTestFixture.cs" />
+    <Compile Include="IocContainerTestFixture.cs" />
+    <Compile Include="LaboContainerTestFixture.cs" />
+    <Compile Include="LightInjectContainerTestFixture.cs" />
+    <Compile Include="LinfuContainerTestFixture.cs" />
+    <Compile Include="MunqContainerTestFixture.cs" />
+    <Compile Include="NInjectContainerTestFixture.cs" />
+    <Compile Include="Performance\Domain\Application.cs" />
+    <Compile Include="Performance\Domain\ConfigurationManager.cs" />
+    <Compile Include="Performance\Domain\Controller.cs" />
+    <Compile Include="Performance\Domain\ErrorHandler.cs" />
+    <Compile Include="Performance\Domain\IApplication.cs" />
+    <Compile Include="Performance\Domain\IConfigurationManager.cs" />
+    <Compile Include="Performance\Domain\IController.cs" />
+    <Compile Include="Performance\Domain\IErrorHandler.cs" />
+    <Compile Include="Performance\Domain\ILogger.cs" />
+    <Compile Include="Performance\Domain\ISettings.cs" />
+    <Compile Include="Performance\Domain\Logger.cs" />
+    <Compile Include="Performance\Domain\Settings.cs" />
+    <Compile Include="Performance\IocContainerPerformanceTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleInjectorContainerTestFixture.cs" />
+    <Compile Include="StructureMapContainerTestFixture.cs" />
+    <Compile Include="UnityContainerTestFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Labo.Common.Ioc.Autofac\Labo.Common.Ioc.Autofac.csproj">
+      <Project>{2EF836F8-533E-4A39-9D58-E3B92709B9DB}</Project>
+      <Name>Labo.Common.Ioc.Autofac</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.Dynamo\Labo.Common.Ioc.Dynamo.csproj">
+      <Project>{BCD721B8-722F-47EB-A115-6779311ACBBC}</Project>
+      <Name>Labo.Common.Ioc.Dynamo</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.HaveBox\Labo.Common.Ioc.HaveBox.csproj">
+      <Project>{9DFF95EF-2C66-4F6B-8C95-AA26085A1ACC}</Project>
+      <Name>Labo.Common.Ioc.HaveBox</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.Hiro\Labo.Common.Ioc.Hiro.csproj">
+      <Project>{3D7145B5-9DAD-4545-8EDA-2CEC7C7CD84D}</Project>
+      <Name>Labo.Common.Ioc.Hiro</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.LightCore\Labo.Common.Ioc.LightCore.csproj">
+      <Project>{C02C333F-36A3-438A-A7E4-F962D173514A}</Project>
+      <Name>Labo.Common.Ioc.LightCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.LightInject\Labo.Common.Ioc.LightInject.csproj">
+      <Project>{14DE7087-F696-4CB0-A725-8E19CFBEEB25}</Project>
+      <Name>Labo.Common.Ioc.LightInject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.LinFu\Labo.Common.Ioc.LinFu.csproj">
+      <Project>{BAB0B395-E3B3-4E70-9F66-08F5AF520C56}</Project>
+      <Name>Labo.Common.Ioc.LinFu</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.Mugen\Labo.Common.Ioc.Mugen.csproj">
+      <Project>{23B99090-B9AD-460E-B92D-EF83F9BF87EC}</Project>
+      <Name>Labo.Common.Ioc.Mugen</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.Munq\Labo.Common.Ioc.Munq.csproj">
+      <Project>{42D2D5B7-119D-4AF2-A013-D91E1B1F014E}</Project>
+      <Name>Labo.Common.Ioc.Munq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.NInject\Labo.Common.Ioc.NInject.csproj">
+      <Project>{098EC3DB-EBA6-4BE0-A5DC-DE0BE51A825C}</Project>
+      <Name>Labo.Common.Ioc.NInject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.SimpleInjector\Labo.Common.Ioc.SimpleInjector.csproj">
+      <Project>{043A3435-8E36-4AA5-AB47-8FB490CD2D6D}</Project>
+      <Name>Labo.Common.Ioc.SimpleInjector</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.StructureMap\Labo.Common.Ioc.StructureMap.csproj">
+      <Project>{D5458F81-BDB8-4686-9C40-8F7207DB1E6A}</Project>
+      <Name>Labo.Common.Ioc.StructureMap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.TinyIoc\Labo.Common.Ioc.TinyIoc.csproj">
+      <Project>{781B12C0-4053-48D5-A785-161E22FD30E4}</Project>
+      <Name>Labo.Common.Ioc.TinyIoc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc.Unity\Labo.Common.Ioc.Unity.csproj">
+      <Project>{A8D7E36F-0711-4BDF-9425-0B718FD41DCB}</Project>
+      <Name>Labo.Common.Ioc.Unity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Labo.Common.Ioc\Labo.Common.Ioc.csproj">
+      <Project>{d42706de-715e-463e-86b9-41287191deeb}</Project>
+      <Name>Labo.Common.Ioc</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

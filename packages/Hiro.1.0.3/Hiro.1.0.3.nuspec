@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Hiro</id>
+    <version>1.0.3</version>
+    <title>Hiro</title>
+    <authors>Phili Plaureano</authors>
+    <owners>Phili Plaureano</owners>
+    <licenseUrl>http://www.gnu.org/licenses/lgpl.html</licenseUrl>
+    <projectUrl>http://code.google.com/p/hiro/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This package contains Hiro, an ultra-lightweight, inversion of control container compiler framework.</description>
+    <summary>This package contains Hiro, an ultra-lightweight, inversion of control container compiler framework.</summary>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>ioc di</tags>
+  </metadata>
+</package>

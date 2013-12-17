@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Dynamo.Ioc</id>
+    <version>3.0.2.0</version>
+    <title>Dynamo.Ioc</title>
+    <authors>Martin From</authors>
+    <owners>Martin From</owners>
+    <projectUrl>http://martinf.github.io/Dynamo-IoC</projectUrl>
+    <iconUrl>http://www.fakeyourbeauty.com/dynamo-ioc-logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Dynamo IoC is a super fast and lightweight IoC Container.</description>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>IoC Inversion Of Control Dependency Injection</tags>
+  </metadata>
+</package>
