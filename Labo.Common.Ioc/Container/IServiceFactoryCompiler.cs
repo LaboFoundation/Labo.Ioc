@@ -28,6 +28,7 @@
 
 namespace Labo.Common.Ioc.Container
 {
+    using System.Collections.Generic;
     using System.Reflection.Emit;
 
     /// <summary>
@@ -51,5 +52,18 @@ namespace Labo.Common.Ioc.Container
         /// Compiles the service factory.
         /// </summary>
         void CompileServiceFactory();
+
+        /// <summary>
+        /// Gets the parent service factories.
+        /// </summary>
+        /// <value>
+        /// The parents.
+        /// </value>
+        IList<IServiceFactory> ParentFactories { get; }
+
+        /// <summary>
+        /// Invalidates the service factory compiler.
+        /// </summary>
+        void Invalidate();
     }
 }

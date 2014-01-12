@@ -61,6 +61,24 @@ namespace Labo.Common.Ioc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Circular dependency detected: &apos;{0}&apos;.
+        /// </summary>
+        internal static string CircularDependencyValidator_CheckCircularDependency_Circular_dependency_detected {
+            get {
+                return ResourceManager.GetString("CircularDependencyValidator_CheckCircularDependency_Circular_dependency_detected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Probable circular dependency between services. Resolve depth reached to the max resolve depth which is {0}.
+        /// </summary>
+        internal static string CircularDependencyValidator_CheckCircularDependency_max_resolve_depth {
+            get {
+                return ResourceManager.GetString("CircularDependencyValidator_CheckCircularDependency_max_resolve_depth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Implementation type &apos;{0}&apos; cannot be abstract, interface, array or type of object.
         /// </summary>
         internal static string LaboIocContainer_ValidateRegistrationTypes_ImplementationCannotBeInRestrictedForms {

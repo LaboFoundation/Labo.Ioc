@@ -36,8 +36,10 @@ namespace Labo.Common.Ioc.Container
         /// <summary>
         /// Builds the service factory.
         /// </summary>
+        /// <param name="serviceRegistrationManager">The service registration manager.</param>
         /// <param name="serviceRegistration">The service registration.</param>
+        /// <param name="circularDependencyValidator">The circular dependency validator instance.</param>
         /// <returns>Service factory class.</returns>
-        ServiceFactory BuildServiceFactory(ServiceRegistration serviceRegistration);
+        IServiceFactory BuildServiceFactory(IServiceRegistrationManager serviceRegistrationManager, ServiceRegistration serviceRegistration, CircularDependencyValidator circularDependencyValidator);
     }
 }

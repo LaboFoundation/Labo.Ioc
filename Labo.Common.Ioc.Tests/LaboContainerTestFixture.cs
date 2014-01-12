@@ -54,7 +54,7 @@
             }
         }
 
-        [Test, Ignore]
+        [Test]
         public void ResolveDetectCircularDependency()
         {
             Container.IocContainer container = new Container.IocContainer();
@@ -71,5 +71,7 @@
 
             Assert.Throws<IocContainerDependencyResolutionException>(() => container.GetInstance<ICircularDependencyClass1>());
         }
+
+        // TODO: Write tests related to labo ioc container
     }
 }

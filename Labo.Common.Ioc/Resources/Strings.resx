@@ -125,4 +125,10 @@
   <data name="ServiceCreatorManager_GetServiceCreator_No_registration_found_for_type_and_name" xml:space="preserve">
     <value>No registration could be found for the type '{0}' named '{1}'.</value>
   </data>
+  <data name="CircularDependencyValidator_CheckCircularDependency_max_resolve_depth" xml:space="preserve">
+    <value>Probable circular dependency between services. Resolve depth reached to the max resolve depth which is {0}</value>
+  </data>
+  <data name="CircularDependencyValidator_CheckCircularDependency_Circular_dependency_detected" xml:space="preserve">
+    <value>Circular dependency detected: '{0}'</value>
+  </data>
 </root>

@@ -92,13 +92,6 @@ namespace Labo.Common.Ioc.Container
         ServiceRegistration GetServiceRegistration(Type serviceType);
 
         /// <summary>
-        /// Gets all service registrations.
-        /// </summary>
-        /// <param name="serviceType">Type of the service.</param>
-        /// <returns>List of service registrations.</returns>
-        IList<ServiceRegistration> GetAllServiceRegistrations(Type serviceType);
-
-        /// <summary>
         /// Determines whether [is service registered] [the specified service type].
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
@@ -112,5 +105,27 @@ namespace Labo.Common.Ioc.Container
         /// <param name="serviceType">Type of the service.</param>
         /// <returns>true if the service is registered otherwise false.</returns>
         bool IsServiceRegistered(Type serviceType);
+
+        /// <summary>
+        /// Gets all service creators.
+        /// </summary>
+        /// <param name="serviceType">Type of the service.</param>
+        /// <returns>List of service instance creators.</returns>
+        IList<ServiceInstanceCreator> GetAllServiceCreators(Type serviceType);
+
+        /// <summary>
+        /// Gets the service creator.
+        /// </summary>
+        /// <param name="serviceType">Type of the service.</param>
+        /// <returns>The service instance creator.</returns>
+        ServiceInstanceCreator GetServiceCreator(Type serviceType);
+
+        /// <summary>
+        /// Gets the service creator.
+        /// </summary>
+        /// <param name="serviceType">Type of the service.</param>
+        /// <param name="name">The name.</param>
+        /// <returns>The service instance creator.</returns>
+        ServiceInstanceCreator GetServiceCreator(Type serviceType, string name);
     }
 }

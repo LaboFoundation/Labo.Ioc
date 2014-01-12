@@ -4,30 +4,199 @@
     using System.Collections.Generic;
     using System.Diagnostics;
 
-    using Labo.Common.Ioc.Autofac;
     using Labo.Common.Ioc.Dynamo;
     using Labo.Common.Ioc.HaveBox;
     using Labo.Common.Ioc.Hiro;
-    using Labo.Common.Ioc.LightCore;
     using Labo.Common.Ioc.LightInject;
-    using Labo.Common.Ioc.Linfu;
-    using Labo.Common.Ioc.Mugen;
     using Labo.Common.Ioc.Munq;
-    using Labo.Common.Ioc.NInject;
     using Labo.Common.Ioc.SimpleInjector;
-    using Labo.Common.Ioc.StructureMap;
     using Labo.Common.Ioc.Tests.Performance.Domain;
-    using Labo.Common.Ioc.TinyIoc;
-    using Labo.Common.Ioc.Unity;
 
     using NUnit.Framework;
 
     [TestFixture]
     public class IocContainerPerformanceTest
     {
+        private sealed class NullContainer : IIocContainer
+        {
+            public bool IsRegistered<TService>(string name)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsRegistered<TService>()
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsRegistered(Type type)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsRegistered(Type type, string name)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<TService> GetAllInstances<TService>()
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<object> GetAllInstances(Type serviceType)
+            {
+                throw new NotImplementedException();
+            }
+
+            public TService GetInstance<TService>(object[] parameters) where TService : class
+            {
+                throw new NotImplementedException();
+            }
+
+            public TService GetInstance<TService>() where TService : class
+            {
+               return (TService)(object)new Application(new Controller(new ErrorHandler(new Logger(), new Settings(new ConfigurationManager()))));
+            }
+
+            public TService GetInstance<TService>(string name)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstance(Type serviceType, object[] parameters)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstance(Type serviceType)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstanceByName(Type serviceType, string name, object[] parameters)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstanceByName(Type serviceType, string name)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstanceOptional(Type serviceType, object[] parameters)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstanceOptional(Type serviceType)
+            {
+                throw new NotImplementedException();
+            }
+
+            public TService GetInstanceOptional<TService>(object[] parameters)
+            {
+                throw new NotImplementedException();
+            }
+
+            public TService GetInstanceOptional<TService>()
+            {
+                throw new NotImplementedException();
+            }
+
+            public TService GetInstanceOptionalByName<TService>(string name, object[] parameters)
+            {
+                throw new NotImplementedException();
+            }
+
+            public TService GetInstanceOptionalByName<TService>(string name)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstanceOptionalByName(Type serviceType, string name, object[] parameters)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstanceOptionalByName(Type serviceType, string name)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void RegisterSingleInstance<TImplementation>(Func<IIocContainerResolver, TImplementation> creator) where TImplementation : class
+            {
+            }
+
+            public void RegisterSingleInstance<TService, TImplementation>() where TImplementation : TService
+            {
+            }
+
+            public void RegisterSingleInstance(Type serviceType, Type implementationType)
+            {
+            }
+
+            public void RegisterSingleInstance(Type serviceType)
+            {
+            }
+
+            public void RegisterSingleInstanceNamed<TImplementation>(Func<IIocContainerResolver, TImplementation> creator, string name) where TImplementation : class
+            {
+            }
+
+            public void RegisterSingleInstanceNamed<TService, TImplementation>(string name) where TImplementation : TService
+            {
+            }
+
+            public void RegisterSingleInstanceNamed(Type serviceType, Type implementationType, string name)
+            {
+            }
+
+            public void RegisterSingleInstanceNamed(Type serviceType, string name)
+            {
+            }
+
+            public void RegisterInstance<TService, TImplementation>() where TImplementation : TService
+            {
+            }
+
+            public void RegisterInstance<TImplementation>(Func<IIocContainerResolver, TImplementation> creator) where TImplementation : class
+            {
+            }
+
+            public void RegisterInstance(Type serviceType, Type implementationType)
+            {
+            }
+
+            public void RegisterInstance(Type serviceType)
+            {
+            }
+
+            public void RegisterInstanceNamed<TImplementation>(Func<IIocContainerResolver, TImplementation> creator, string name) where TImplementation : class
+            {
+            }
+
+            public void RegisterInstanceNamed<TService, TImplementation>(string name) where TImplementation : TService
+            {
+            }
+
+            public void RegisterInstanceNamed(Type serviceType, Type implementationType, string name)
+            {
+            }
+
+            public void RegisterInstanceNamed(Type serviceType, string name)
+            {
+            }
+
+            public void RegisterModule(IIocModule iocModule)
+            {
+            }
+        }
+
         private static readonly List<long> s_BatchIterations = new List<long> { 1000, 5000, 20000, 100000, 250000, 1000000, 2500000 };
         private static readonly Dictionary<string, Func<IIocContainer>> s_Containers = new Dictionary<string, Func<IIocContainer>>
                                                                                      {
+                                                                                         { "Null", () => new NullContainer() },
                                                                                          //{ "NInject", () => new NInjectIocContainer() },
                                                                                          //{ "Linfu", () => new LinfuIocContainer() },
                                                                                          //{ "Unity", () => new UnityIocContainer() },
@@ -35,7 +204,7 @@
                                                                                          //{ "Mugen", () => new MugenIocContainer() },
                                                                                          //{ "TinyIoc", () => new TinyIocContainer() },
                                                                                          //{ "LightCore", () => new LightCoreIocContainer() },
-                                                                                         { "Dynamo", () => new DynamoIocContainer() },
+                                                                                         { "Dymamo", () => new DynamoIocContainer() },
                                                                                          { "Hiro", () => new HiroIocContainer() },
                                                                                          { "Munq", () => new MunqIocContainer() },
                                                                                          { "LightInject", () => new LightInjectIocContainer() },

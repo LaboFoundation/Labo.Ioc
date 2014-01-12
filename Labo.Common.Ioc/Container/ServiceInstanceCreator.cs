@@ -36,6 +36,11 @@ namespace Labo.Common.Ioc.Container
     internal sealed class ServiceInstanceCreator
     {
         /// <summary>
+        /// The service registration manager
+        /// </summary>
+        private readonly IServiceRegistrationManager m_ServiceRegistrationManager;
+
+        /// <summary>
         /// The service factory builder
         /// </summary>
         private readonly IServiceFactoryBuilder m_ServiceFactoryBuilder;
@@ -48,15 +53,17 @@ namespace Labo.Common.Ioc.Container
         /// <summary>
         /// The service factory
         /// </summary>
-        private ServiceFactory m_ServiceFactory;
+        private IServiceFactory m_ServiceFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceInstanceCreator"/> class.
         /// </summary>
+        /// <param name="serviceRegistrationManager">The service registration manager.</param>
         /// <param name="serviceFactoryBuilder">The service factory builder.</param>
         /// <param name="serviceRegistration">The service registration.</param>
-        public ServiceInstanceCreator(IServiceFactoryBuilder serviceFactoryBuilder, ServiceRegistration serviceRegistration)
+        public ServiceInstanceCreator(IServiceRegistrationManager serviceRegistrationManager, IServiceFactoryBuilder serviceFactoryBuilder, ServiceRegistration serviceRegistration)
         {
+            m_ServiceRegistrationManager = serviceRegistrationManager;
             m_ServiceFactoryBuilder = serviceFactoryBuilder;
             m_ServiceRegistration = serviceRegistration;
         }
@@ -83,13 +90,52 @@ namespace Labo.Common.Ioc.Container
         }
 
         /// <summary>
+        /// Invalidates the service instance creator.
+        /// </summary>
+        public void Invalidate()
+        {
+            if (m_ServiceFactory != null)
+            {
+                m_ServiceFactory.Invalidate();
+                m_ServiceFactory = null;
+            }
+        }
+
+        /// <summary>
         /// Gets the service factory.
         /// </summary>
-        /// <returns>The service factory.</returns>
+        /// <returns>
+        /// The service factory.
+        /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private ServiceFactory GetServiceFactory()
+        public IServiceFactory GetServiceFactory()
         {
-            return m_ServiceFactory ?? (m_ServiceFactory = m_ServiceFactoryBuilder.BuildServiceFactory(m_ServiceRegistration));
+            if (m_ServiceFactory != null && m_ServiceFactory.IsCompiled())
+            {
+                return m_ServiceFactory;
+            }
+
+            using (CircularDependencyValidator circularDependencyValidator = new CircularDependencyValidator())
+            {
+                return m_ServiceFactory = m_ServiceFactoryBuilder.BuildServiceFactory(m_ServiceRegistrationManager, m_ServiceRegistration, circularDependencyValidator);
+            }
+        }
+
+        /// <summary>
+        /// Gets the service factory.
+        /// </summary>
+        /// <param name="circularDependencyValidator">The circular dependency validator.</param>
+        /// <returns>
+        /// The service factory.
+        /// </returns>
+        internal IServiceFactory GetServiceFactory(CircularDependencyValidator circularDependencyValidator)
+        {
+            if (m_ServiceFactory != null && m_ServiceFactory.IsCompiled())
+            {
+                return m_ServiceFactory;
+            }
+
+            return m_ServiceFactory = m_ServiceFactoryBuilder.BuildServiceFactory(m_ServiceRegistrationManager, m_ServiceRegistration, circularDependencyValidator);
         }
     }
 }

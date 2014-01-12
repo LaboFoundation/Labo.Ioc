@@ -38,7 +38,7 @@ namespace Labo.Common.Ioc.Container
         /// <summary>
         /// The service factory invoker
         /// </summary>
-        private readonly IServiceFactoryInvoker m_ServiceFactoryInvoker;
+        private IServiceFactoryInvoker m_ServiceFactoryInvoker;
 
         /// <summary>
         /// Gets the service factory compiler.
@@ -46,7 +46,7 @@ namespace Labo.Common.Ioc.Container
         /// <value>
         /// The service factory compiler.
         /// </value>
-        internal IServiceFactoryCompiler ServiceFactoryCompiler { get; private set; }
+        public IServiceFactoryCompiler ServiceFactoryCompiler { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceFactory"/> class.
@@ -87,6 +87,25 @@ namespace Labo.Common.Ioc.Container
         public object GetServiceInstance()
         {
             return m_ServiceFactoryInvoker.InvokeServiceFactory();
+        }
+
+        /// <summary>
+        /// Invalidates this service factory.
+        /// </summary>
+        public void Invalidate()
+        {
+            ServiceFactoryCompiler.Invalidate();
+            ServiceFactoryCompiler = null;
+            m_ServiceFactoryInvoker = null;
+        }
+
+        /// <summary>
+        /// Determines whether the factory is compiled.
+        /// </summary>
+        /// <returns>returns <c>true</c> if factory is compiled, otherwise <c>false</c></returns>
+        public bool IsCompiled()
+        {
+            return m_ServiceFactoryInvoker != null;
         }
     }
 }

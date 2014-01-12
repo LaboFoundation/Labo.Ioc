@@ -33,6 +33,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Labo.Common.Ioc.XML</DocumentationFile>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Labo.Common, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -59,8 +60,8 @@
     <Compile Include="Container\IServiceFactoryBuilder.cs" />
     <Compile Include="Container\IServiceFactoryCompiler.cs" />
     <Compile Include="Container\IServiceFactoryInvoker.cs" />
-    <Compile Include="Container\IServiceCreatorManager.cs" />
     <Compile Include="Container\IServiceRegistrationManager.cs" />
+    <Compile Include="Container\ServiceFactoryCompilerBase.cs" />
     <Compile Include="Container\ServiceInstanceCreator.cs" />
     <Compile Include="Container\ServiceKey.cs" />
     <Compile Include="Container\ServiceConstructorChooser.cs" />
@@ -68,7 +69,6 @@
     <Compile Include="Container\ServiceLifetime.cs" />
     <Compile Include="Container\ServiceRegistration.cs" />
     <Compile Include="Container\ServiceFactoryBuilder.cs" />
-    <Compile Include="Container\ServiceCreatorManager.cs" />
     <Compile Include="Container\ServiceRegistrationManager.cs" />
     <Compile Include="Container\SingletonServiceFactoryCompiler.cs" />
     <Compile Include="Container\SingletonServiceFactoryInvoker.cs" />

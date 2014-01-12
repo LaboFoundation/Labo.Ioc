@@ -45,5 +45,24 @@ namespace Labo.Common.Ioc.Container
         /// </summary>
         /// <returns>The service instance.</returns>
         object GetServiceInstance();
+
+        /// <summary>
+        /// Invalidates this service factory.
+        /// </summary>
+        void Invalidate();
+
+        /// <summary>
+        /// Gets the service factory compiler.
+        /// </summary>
+        /// <value>
+        /// The service factory compiler.
+        /// </value>
+        IServiceFactoryCompiler ServiceFactoryCompiler { get; }
+
+        /// <summary>
+        /// Determines whether the factory is compiled.
+        /// </summary>
+        /// <returns>returns <c>true</c> if factory is compiled, otherwise <c>false</c></returns>
+        bool IsCompiled();
     }
 }

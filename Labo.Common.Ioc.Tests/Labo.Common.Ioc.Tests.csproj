@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Labo.Common, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -49,7 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutofacContainerTestFixture.cs" />
-    <Compile Include="DynamoContainerTestFixture.cs" />
     <Compile Include="IocContainerTestFixture.cs" />
     <Compile Include="LaboContainerTestFixture.cs" />
     <Compile Include="LightInjectContainerTestFixture.cs" />

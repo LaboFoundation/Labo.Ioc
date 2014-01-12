@@ -37,7 +37,7 @@ namespace Labo.Common.Ioc.Container
     /// <summary>
     /// The transient service factory compiler class.
     /// </summary>
-    internal sealed class TransientServiceFactoryCompiler : IServiceFactoryCompiler
+    internal sealed class TransientServiceFactoryCompiler : ServiceFactoryCompilerBase
     {
         /// <summary>
         /// The dynamic assembly builder
@@ -55,16 +55,6 @@ namespace Labo.Common.Ioc.Container
         private readonly ConstructorInfo m_ServiceConstructor;
 
         /// <summary>
-        /// The dependent service factory compilers
-        /// </summary>
-        private readonly IServiceFactoryCompiler[] m_DependentServiceFactoryCompilers;
-
-        /// <summary>
-        /// The factory type
-        /// </summary>
-        private Type m_FactoryType;
-
-        /// <summary>
         /// The create instance method builder
         /// </summary>
         private MethodBuilder m_CreateInstanceMethodBuilder;
@@ -75,58 +65,59 @@ namespace Labo.Common.Ioc.Container
         /// <param name="dynamicAssemblyBuilder">The dynamic assembly builder.</param>
         /// <param name="serviceImplementationType">Type of the service.</param>
         /// <param name="serviceConstructor">The service constructor.</param>
-        /// <param name="dependentServiceFactoryCompilers">The dependent service factory compilers.</param>
-        public TransientServiceFactoryCompiler(DynamicAssemblyBuilder dynamicAssemblyBuilder, Type serviceImplementationType, ConstructorInfo serviceConstructor, params IServiceFactoryCompiler[] dependentServiceFactoryCompilers)
+        /// <param name="dependentServiceFactories">The dependent service factories.</param>
+        public TransientServiceFactoryCompiler(DynamicAssemblyBuilder dynamicAssemblyBuilder, Type serviceImplementationType, ConstructorInfo serviceConstructor, params IServiceFactory[] dependentServiceFactories)
+            : base(serviceImplementationType, dependentServiceFactories)
         {
             m_DynamicAssemblyBuilder = dynamicAssemblyBuilder;
             m_ServiceImplementationType = serviceImplementationType;
             m_ServiceConstructor = serviceConstructor;
-            m_DependentServiceFactoryCompilers = dependentServiceFactoryCompilers;
-        }
-
-        /// <summary>
-        /// Creates the service factory invoker.
-        /// </summary>
-        /// <returns>The service factory invoker.</returns>
-        public IServiceFactoryInvoker CreateServiceFactoryInvoker()
-        {
-            CompileServiceFactory();
-
-            return new TransientServiceFactoryInvoker(m_FactoryType, m_ServiceImplementationType);
-        }
-
-        /// <summary>
-        /// Compiles the service factory.
-        /// </summary>
-        public void CompileServiceFactory()
-        {
-            if (m_FactoryType == null)
-            {
-                TypeBuilder typeBuilder = m_DynamicAssemblyBuilder.CreateTypeBuilder("TransientService_{0}", TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
-                m_CreateInstanceMethodBuilder = typeBuilder.DefineMethod("CreateInstance", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, m_ServiceImplementationType, Type.EmptyTypes);
-                ILGenerator createInstanceMethodIlGenerator = m_CreateInstanceMethodBuilder.GetILGenerator();
-
-                for (int i = 0; i < m_DependentServiceFactoryCompilers.Length; i++)
-                {
-                    IServiceFactoryCompiler dependentServiceFactoryCompiler = m_DependentServiceFactoryCompilers[i];
-                    dependentServiceFactoryCompiler.CompileServiceFactory();
-                    dependentServiceFactoryCompiler.EmitServiceFactoryCreatorMethod(createInstanceMethodIlGenerator);
-                }
-
-                EmitHelper.Newobj(createInstanceMethodIlGenerator, m_ServiceConstructor);
-                EmitHelper.Ret(createInstanceMethodIlGenerator);
-
-                m_FactoryType = typeBuilder.CreateType();
-            }
         }
 
         /// <summary>
         /// Emits the service factory creator method.
         /// </summary>
         /// <param name="generator">The utility generator.</param>
-        public void EmitServiceFactoryCreatorMethod(ILGenerator generator)
+        public override void EmitServiceFactoryCreatorMethod(ILGenerator generator)
         {
             EmitHelper.Call(generator, m_CreateInstanceMethodBuilder);
+        }
+
+        /// <summary>
+        /// Compiles the service factory.
+        /// </summary>
+        /// <returns>
+        /// The service factory <see cref="Type"/>.
+        /// </returns>
+        protected override Type CompileServiceFactoryType()
+        {
+            TypeBuilder typeBuilder = m_DynamicAssemblyBuilder.CreateTypeBuilder("TransientService_{0}", TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
+            m_CreateInstanceMethodBuilder = typeBuilder.DefineMethod("CreateInstance", MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Static, m_ServiceImplementationType, Type.EmptyTypes);
+            ILGenerator createInstanceMethodIlGenerator = m_CreateInstanceMethodBuilder.GetILGenerator();
+
+            for (int i = 0; i < DependentServiceFactories.Length; i++)
+            {
+                IServiceFactory dependentServiceFactory = DependentServiceFactories[i];
+                IServiceFactoryCompiler dependentServiceFactoryCompiler = dependentServiceFactory.ServiceFactoryCompiler;
+                dependentServiceFactoryCompiler.CompileServiceFactory();
+                dependentServiceFactoryCompiler.EmitServiceFactoryCreatorMethod(createInstanceMethodIlGenerator);
+            }
+
+            EmitHelper.Newobj(createInstanceMethodIlGenerator, m_ServiceConstructor);
+            EmitHelper.Ret(createInstanceMethodIlGenerator);
+
+            return typeBuilder.CreateType();
+        }
+
+        /// <summary>
+        /// Creates the service factory invoker.
+        /// </summary>
+        /// <param name="factoryType">Type of the factory.</param>
+        /// <param name="serviceImplementationType">Type of the service implementation.</param>
+        /// <returns>The service factory invoker.</returns>
+        protected override IServiceFactoryInvoker CreateServiceFactoryInvoker(Type factoryType, Type serviceImplementationType)
+        {
+            return new TransientServiceFactoryInvoker(factoryType, serviceImplementationType);
         }
     }
 }

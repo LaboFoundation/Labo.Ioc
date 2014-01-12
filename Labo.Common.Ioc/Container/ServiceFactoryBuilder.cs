@@ -28,6 +28,7 @@
 
 namespace Labo.Common.Ioc.Container
 {
+    using System;
     using System.Reflection;
 
     /// <summary>
@@ -46,67 +47,70 @@ namespace Labo.Common.Ioc.Container
         private readonly IServiceConstructorChooser m_ServiceConstructorChooser;
 
         /// <summary>
-        /// The service registration manager
-        /// </summary>
-        private readonly IServiceRegistrationManager m_ServiceRegistrationManager;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ServiceFactoryBuilder"/> class.
         /// </summary>
         /// <param name="dynamicAssemblyBuilder">The dynamic assembly builder.</param>
         /// <param name="serviceConstructorChooser">The service constructor chooser.</param>
-        /// <param name="serviceRegistrationManager">The service registration manager.</param>
-        public ServiceFactoryBuilder(DynamicAssemblyBuilder dynamicAssemblyBuilder, IServiceConstructorChooser serviceConstructorChooser, IServiceRegistrationManager serviceRegistrationManager)
+        public ServiceFactoryBuilder(DynamicAssemblyBuilder dynamicAssemblyBuilder, IServiceConstructorChooser serviceConstructorChooser)
         {
             m_DynamicAssemblyBuilder = dynamicAssemblyBuilder;
             m_ServiceConstructorChooser = serviceConstructorChooser;
-            m_ServiceRegistrationManager = serviceRegistrationManager;
         }
 
         /// <summary>
         /// Builds the service factory.
         /// </summary>
+        /// <param name="serviceRegistrationManager">The service registration manager.</param>
         /// <param name="serviceRegistration">The service registration.</param>
+        /// <param name="circularDependencyValidator">The circular dependency validator instance.</param>
         /// <returns>Service factory class.</returns>
-        public ServiceFactory BuildServiceFactory(ServiceRegistration serviceRegistration)
+        public IServiceFactory BuildServiceFactory(IServiceRegistrationManager serviceRegistrationManager, ServiceRegistration serviceRegistration, CircularDependencyValidator circularDependencyValidator)
         {
-            // TODO: check circular dependency
+            circularDependencyValidator.CheckCircularDependency(serviceRegistration.ServiceType);
 
             if (serviceRegistration.InstanceCreator == null)
             {
                 ConstructorInfo constructor = m_ServiceConstructorChooser.GetConstructor(serviceRegistration.ImplementationType);
                 ParameterInfo[] constructorParameters = constructor.GetParameters();
-                IServiceFactoryCompiler[] dependentServiceFactoryCompilers;
+                IServiceFactory[] dependentServiceFactories;
                 int constructorParametersLength = constructorParameters.Length;
                 if (constructorParametersLength == 0)
                 {
-                    dependentServiceFactoryCompilers = new IServiceFactoryCompiler[0];
+                    dependentServiceFactories = new IServiceFactory[0];
                 }
                 else
                 {
-                    dependentServiceFactoryCompilers = new IServiceFactoryCompiler[constructorParametersLength];
+                    dependentServiceFactories = new IServiceFactory[constructorParametersLength];
                     for (int i = 0; i < constructorParametersLength; i++)
                     {
                         ParameterInfo constructorParameter = constructorParameters[i];
-                        ServiceFactory dependentServiceFactory = BuildServiceFactory(m_ServiceRegistrationManager.GetServiceRegistration(constructorParameter.ParameterType));
-                        dependentServiceFactoryCompilers[i] = dependentServiceFactory.ServiceFactoryCompiler;
+
+                        // TODO: Add dependent service instance creators instead of service factories to eliminate m_ServiceFactory.IsCompiled() check in ServiceInstanceCreator class.
+                        IServiceFactory dependentServiceFactory = serviceRegistrationManager.GetServiceCreator(constructorParameter.ParameterType).GetServiceFactory(circularDependencyValidator);
+                        dependentServiceFactories[i] = dependentServiceFactory;
                     }
                 }
 
-                IServiceFactoryCompiler serviceFactoryCompiler = null;
+                ServiceFactoryCompilerBase serviceFactoryCompiler;
 
                 // TODO: Service Factory Compiler Factory
                 switch (serviceRegistration.ServiceLifetime)
                 {
                     case ServiceLifetime.Transient:
-                        serviceFactoryCompiler = new TransientServiceFactoryCompiler(m_DynamicAssemblyBuilder, serviceRegistration.ImplementationType, constructor, dependentServiceFactoryCompilers);
+                        serviceFactoryCompiler = new TransientServiceFactoryCompiler(m_DynamicAssemblyBuilder, serviceRegistration.ImplementationType, constructor, dependentServiceFactories);
                         break;
                     case ServiceLifetime.Singleton:
-                        serviceFactoryCompiler = new SingletonServiceFactoryCompiler(m_DynamicAssemblyBuilder, serviceRegistration.ImplementationType, constructor, dependentServiceFactoryCompilers);
+                        serviceFactoryCompiler = new SingletonServiceFactoryCompiler(m_DynamicAssemblyBuilder, serviceRegistration.ImplementationType, constructor, dependentServiceFactories);
                         break;
+                    default:
+                        throw new InvalidOperationException();
                 }
 
-                return new ServiceFactory(serviceFactoryCompiler);
+                circularDependencyValidator.Release();
+
+                IServiceFactory serviceFactory = new ServiceFactory(serviceFactoryCompiler);
+                serviceFactoryCompiler.SetServiceFactory(serviceFactory);
+                return serviceFactory;
             }
 
             IServiceFactoryInvoker serviceFactoryInvoker = null;
@@ -121,6 +125,8 @@ namespace Labo.Common.Ioc.Container
                     serviceFactoryInvoker = new SingletonServiceFactoryInvoker(serviceRegistration.InstanceCreator);
                     break;
             }
+
+            circularDependencyValidator.Release();
 
             return new ServiceFactory(serviceFactoryInvoker);
         }

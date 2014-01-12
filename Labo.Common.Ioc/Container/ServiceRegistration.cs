@@ -49,7 +49,6 @@ namespace Labo.Common.Ioc.Container
         /// <value>
         /// The type of the service.
         /// </value>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public Type ServiceType { get; private set; }
 
         /// <summary>
@@ -66,7 +65,6 @@ namespace Labo.Common.Ioc.Container
         /// <value>
         /// The name of the service.
         /// </value>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public string ServiceName { get; private set; }
 
         /// <summary>
@@ -76,6 +74,14 @@ namespace Labo.Common.Ioc.Container
         /// The instance creator.
         /// </value>
         public Func<object> InstanceCreator { get; private set; }
+
+        /// <summary>
+        /// Gets the service instance creator.
+        /// </summary>
+        /// <value>
+        /// The service instance creator.
+        /// </value>
+        public ServiceInstanceCreator ServiceInstanceCreator { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceRegistration"/> class.
@@ -105,6 +111,15 @@ namespace Labo.Common.Ioc.Container
             ImplementationType = implementationType;
             ServiceLifetime = serviceLifetime;
             ServiceName = serviceName;
+        }
+
+        /// <summary>
+        /// Sets the service instance creator.
+        /// </summary>
+        /// <param name="serviceInstanceCreator">The service instance creator.</param>
+        internal void SetServiceInstanceCreator(ServiceInstanceCreator serviceInstanceCreator)
+        {
+            ServiceInstanceCreator = serviceInstanceCreator;
         }
     }
 }

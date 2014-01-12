@@ -38,6 +38,11 @@ namespace Labo.Common.Ioc.Container
     internal sealed class ServiceRegistrationManager : IServiceRegistrationManager
     {
         /// <summary>
+        /// The service factory builder
+        /// </summary>
+        private readonly IServiceFactoryBuilder m_ServiceFactoryBuilder;
+
+        /// <summary>
         /// The service entries
         /// </summary>
         private readonly Dictionary<ServiceKey, ServiceRegistration> m_ServiceEntries;
@@ -50,8 +55,12 @@ namespace Labo.Common.Ioc.Container
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceRegistrationManager"/> class.
         /// </summary>
-        public ServiceRegistrationManager()
+        /// <param name="serviceFactoryBuilder">
+        /// The service Factory Builder.
+        /// </param>
+        public ServiceRegistrationManager(IServiceFactoryBuilder serviceFactoryBuilder)
         {
+            m_ServiceFactoryBuilder = serviceFactoryBuilder;
             m_ServiceEntries = new Dictionary<ServiceKey, ServiceRegistration>(32);
             m_ServiceEntriesByServiceType = new Dictionary<Type, ServiceRegistration>(32);
         }
@@ -76,6 +85,7 @@ namespace Labo.Common.Ioc.Container
         /// </returns>
         public ServiceRegistration RegisterService(Type serviceType, Type implementationType, ServiceLifetime serviceLifetime, string serviceName = null)
         {
+            // TODO: Make thread-safe
             if (serviceType == null)
             {
                 throw new ArgumentNullException("serviceType");
@@ -90,12 +100,25 @@ namespace Labo.Common.Ioc.Container
 
             if (serviceName == null)
             {
+                if (m_ServiceEntriesByServiceType.TryGetValue(serviceType, out serviceRegistration))
+                {
+                    serviceRegistration.ServiceInstanceCreator.Invalidate();
+                }
+
                 serviceRegistration = m_ServiceEntriesByServiceType[serviceType] = new ServiceRegistration(serviceType, implementationType, serviceLifetime);
             }
             else
             {
-                serviceRegistration = m_ServiceEntries[new ServiceKey(serviceName, serviceType)] = new ServiceRegistration(serviceType, implementationType, serviceLifetime, serviceName);
+                ServiceKey serviceKey = new ServiceKey(serviceName, serviceType);
+                if (m_ServiceEntries.TryGetValue(serviceKey, out serviceRegistration))
+                {
+                    serviceRegistration.ServiceInstanceCreator.Invalidate();
+                }
+
+                serviceRegistration = m_ServiceEntries[serviceKey] = new ServiceRegistration(serviceType, implementationType, serviceLifetime, serviceName);
             }
+
+            SetServiceInstanceCreator(serviceRegistration);
 
             return serviceRegistration;
         }
@@ -135,6 +158,8 @@ namespace Labo.Common.Ioc.Container
             {
                 serviceRegistration = m_ServiceEntries[new ServiceKey(serviceName, serviceType)] = new ServiceRegistration(serviceType, instanceCreator, serviceLifetime, serviceName);
             }
+
+            SetServiceInstanceCreator(serviceRegistration);
 
             return serviceRegistration;
         }
@@ -201,34 +226,69 @@ namespace Labo.Common.Ioc.Container
         }
 
         /// <summary>
-        /// Gets all service registrations.
+        /// Gets all service creators.
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
-        /// <returns>List of service registrations.</returns>
-        public IList<ServiceRegistration> GetAllServiceRegistrations(Type serviceType)
+        /// <returns>List of service instance creators.</returns>
+        public IList<ServiceInstanceCreator> GetAllServiceCreators(Type serviceType)
         {
-            List<ServiceRegistration> instances = new List<ServiceRegistration>();
-            Dictionary<ServiceKey, ServiceRegistration>.Enumerator serviceEntriesEnumerator = m_ServiceEntries.GetEnumerator();
-            while (serviceEntriesEnumerator.MoveNext())
-            {
-                KeyValuePair<ServiceKey, ServiceRegistration> entry = serviceEntriesEnumerator.Current;
-                if (entry.Key.ServiceType == serviceType)
-                {
-                    instances.Add(entry.Value);
-                }
-            }
+             if (serviceType == null)
+             {
+                 throw new ArgumentNullException("serviceType");
+             }
 
-            Dictionary<Type, ServiceRegistration>.Enumerator serviceEntriesByKeyEnumerator = m_ServiceEntriesByServiceType.GetEnumerator();
-            while (serviceEntriesByKeyEnumerator.MoveNext())
-            {
-                KeyValuePair<Type, ServiceRegistration> entry = serviceEntriesByKeyEnumerator.Current;
-                if (entry.Key == serviceType)
-                {
-                    instances.Add(entry.Value);
-                }
-            }
+             List<ServiceInstanceCreator> instances = new List<ServiceInstanceCreator>();
+             Dictionary<ServiceKey, ServiceRegistration>.Enumerator serviceEntriesEnumerator = m_ServiceEntries.GetEnumerator();
+             while (serviceEntriesEnumerator.MoveNext())
+             {
+                 KeyValuePair<ServiceKey, ServiceRegistration> entry = serviceEntriesEnumerator.Current;
+                 if (entry.Key.ServiceType == serviceType)
+                 {
+                     instances.Add(entry.Value.ServiceInstanceCreator);
+                 }
+             }
 
-            return instances;
+             Dictionary<Type, ServiceRegistration>.Enumerator serviceEntriesByKeyEnumerator = m_ServiceEntriesByServiceType.GetEnumerator();
+             while (serviceEntriesByKeyEnumerator.MoveNext())
+             {
+                 KeyValuePair<Type, ServiceRegistration> entry = serviceEntriesByKeyEnumerator.Current;
+                 if (entry.Key == serviceType)
+                 {
+                     instances.Add(entry.Value.ServiceInstanceCreator);
+                 }
+             }
+
+             return instances;
+        }
+
+        /// <summary>
+        /// Gets the service creator.
+        /// </summary>
+        /// <param name="serviceType">Type of the service.</param>
+        /// <returns>The service instance creator.</returns>
+        public ServiceInstanceCreator GetServiceCreator(Type serviceType)
+        {
+            return GetServiceRegistration(serviceType).ServiceInstanceCreator;
+        }
+
+        /// <summary>
+        /// Gets the service creator.
+        /// </summary>
+        /// <param name="serviceType">Type of the service.</param>
+        /// <param name="name">The name.</param>
+        /// <returns>The service instance creator.</returns>
+        public ServiceInstanceCreator GetServiceCreator(Type serviceType, string name)
+        {
+            return GetServiceRegistration(serviceType, name).ServiceInstanceCreator;
+        }
+
+        /// <summary>
+        /// Sets the service instance creator.
+        /// </summary>
+        /// <param name="serviceRegistration">The service registration.</param>
+        private void SetServiceInstanceCreator(ServiceRegistration serviceRegistration)
+        {
+            serviceRegistration.SetServiceInstanceCreator(new ServiceInstanceCreator(this, m_ServiceFactoryBuilder, serviceRegistration));
         }
     }
 }

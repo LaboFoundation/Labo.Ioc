@@ -96,6 +96,47 @@
         }
     }
 
+    public interface I1
+    {
+        int Id { get; }
+    }
+
+    public class C1 : I1
+    {
+        readonly I2 m_I2;
+
+        public C1(I2 i2)
+        {
+            m_I2 = i2;
+        }
+
+        public int Id
+        {
+            get { return m_I2.Id; }
+        }
+    }
+
+    public interface I2
+    {
+        int Id { get; }
+    }
+
+    public class C2 : I2
+    {
+        public int Id
+        {
+            get { return 2; }
+        }
+    }
+
+    public class C3 : I2
+    {
+        public int Id
+        {
+            get { return 3; }
+        }
+    }
+
     [TestFixture]
     public abstract class IocContainerTestFixture
     {
@@ -494,6 +535,36 @@
             Assert.IsFalse(iocContainer.IsRegistered(typeof(ITestService), "TestService"));
             Assert.IsFalse(iocContainer.IsRegistered<ITestService>());
             Assert.IsFalse(iocContainer.IsRegistered<ITestService>("TestService"));
+        }
+
+        [Test]
+        public void WhenDependentRegistryChangesThenImplementationMustChange()
+        {
+            IIocContainer iocContainer = CreateContainer();
+
+            iocContainer.RegisterInstance<I1, C1>();
+            iocContainer.RegisterInstance<I2, C2>();
+
+            Assert.AreEqual(2, iocContainer.GetInstance<I1>().Id);
+
+            iocContainer.RegisterInstance<I2, C3>();
+
+            Assert.AreEqual(3, iocContainer.GetInstance<I1>().Id);
+        }
+
+        [Test]
+        public void WhenDependentRegistryChangesThenImplementationMustChangeFunc()
+        {
+            IIocContainer iocContainer = CreateContainer();
+
+            iocContainer.RegisterInstance<I1>(x => new C1(x.GetInstance<I2>()));
+            iocContainer.RegisterInstance<I2, C2>();
+
+            Assert.AreEqual(2, iocContainer.GetInstance<I1>().Id);
+
+            iocContainer.RegisterInstance<I2, C3>();
+
+            Assert.AreEqual(3, iocContainer.GetInstance<I1>().Id);
         }
     }
 }

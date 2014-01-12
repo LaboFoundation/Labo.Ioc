@@ -100,7 +100,7 @@ namespace Labo.Common.Ioc.SimpleInjector
         public object GetInstance(Type serviceType, string name)
         {
             KeyedService serviceTypeKey = GetServiceTypeKey(serviceType, name);
-            return this.GetInstance(serviceTypeKey);
+            return GetInstance(serviceTypeKey);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace Labo.Common.Ioc.SimpleInjector
         public object GetInstanceOptional(Type serviceType, string name)
         {
             InstanceProducer instanceProducer;
-            if (!this.TryGetValue(GetServiceTypeKey(serviceType, name), out instanceProducer))
+            if (!TryGetValue(GetServiceTypeKey(serviceType, name), out instanceProducer))
             {
                 return null;
             }
@@ -149,9 +149,9 @@ namespace Labo.Common.Ioc.SimpleInjector
         public IEnumerable<object> GetAllInstances(Type serviceType)
         {
             List<object> instances = new List<object>();
-            for (int i = 0; i < this.Keys.Count; i++)
+            for (int i = 0; i < Keys.Count; i++)
             {
-                KeyedService keyedService = this.Keys[i];
+                KeyedService keyedService = Keys[i];
                 if (keyedService.ServiceType == serviceType)
                 {
                     instances.Add(GetInstance(keyedService));                    
