@@ -1,9 +1,9 @@
 Labo.Ioc v0.1
 ========
 
-A lightweight inversion of control framework
+A lightweight and fast inversion of control framework
 
-Highlihts
+Highlights
 ========
 
 1. Configuration through code.
