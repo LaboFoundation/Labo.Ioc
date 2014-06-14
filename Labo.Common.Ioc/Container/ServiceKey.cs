@@ -29,13 +29,18 @@
 namespace Labo.Common.Ioc.Container
 {
     using System;
-    using System.Collections.Generic;
+    using System.Diagnostics;
 
     /// <summary>
     /// Service key.
     /// </summary>
-    internal struct ServiceKey : IEquatable<ServiceKey>, IComparable
+    internal struct ServiceKey : IEquatable<ServiceKey>
     {
+        /// <summary>
+        /// The m_ hash code
+        /// </summary>
+        private readonly int m_HashCode;
+
         /// <summary>
         /// Gets the type of the service.
         /// </summary>
@@ -60,13 +65,11 @@ namespace Labo.Common.Ioc.Container
         public ServiceKey(string serviceName, Type serviceType)
              : this()
         {
-            if (serviceType == null)
-            {
-                throw new ArgumentNullException("serviceType");
-            }
+            Debug.Assert(serviceType == null, "serviceType cannot be null");
 
             ServiceName = serviceName;
             ServiceType = serviceType;
+            m_HashCode = GetHashCodeInternal();
         }
 
         /// <summary>
@@ -112,16 +115,7 @@ namespace Labo.Common.Ioc.Container
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = ServiceType.GetHashCode();
-                if (ServiceName != null)
-                {
-                    hash ^= ServiceName.GetHashCode();
-                }
-
-                return hash;
-            }
+            return m_HashCode;
         }
 
         /// <summary>
@@ -142,22 +136,21 @@ namespace Labo.Common.Ioc.Container
         }
 
         /// <summary>
-        /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+        /// Gets the hash code internal.
         /// </summary>
-        /// <returns>
-        /// A value that indicates the relative order of the objects being compared. The return value has these meanings: Value Meaning Less than zero This instance precedes <paramref name="obj"/> in the sort order. Zero This instance occurs in the same position in the sort order as <paramref name="obj"/>. Greater than zero This instance follows <paramref name="obj"/> in the sort order. 
-        /// </returns>
-        /// <param name="obj">An object to compare with this instance. </param><exception cref="T:System.ArgumentException"><paramref name="obj"/> is not the same type as this instance. </exception><filterpriority>2</filterpriority>
-        public int CompareTo(object obj)
+        /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
+        private int GetHashCodeInternal()
         {
-            ServiceKey keyedService = (ServiceKey)obj;
-            int compare = Comparer<string>.Default.Compare(ServiceName, keyedService.ServiceName);
-            if (compare == 0)
+            unchecked
             {
-                return ServiceType.GetHashCode() - keyedService.ServiceType.GetHashCode();
-            }
+                int hash = ServiceType.GetHashCode();
+                if (ServiceName != null)
+                {
+                    hash ^= ServiceName.GetHashCode();
+                }
 
-            return compare;
+                return hash;
+            }
         }
     }
 }

@@ -52,6 +52,8 @@ namespace Labo.Common.Ioc.Container
         /// </summary>
         private readonly Dictionary<Type, ServiceRegistration> m_ServiceEntriesByServiceType;
 
+        private readonly Dictionary<Type, Func<object>> m_ServiceInvokerCache; 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceRegistrationManager"/> class.
         /// </summary>
@@ -61,8 +63,9 @@ namespace Labo.Common.Ioc.Container
         public ServiceRegistrationManager(IServiceFactoryBuilder serviceFactoryBuilder)
         {
             m_ServiceFactoryBuilder = serviceFactoryBuilder;
-            m_ServiceEntries = new Dictionary<ServiceKey, ServiceRegistration>(32);
-            m_ServiceEntriesByServiceType = new Dictionary<Type, ServiceRegistration>(32);
+            m_ServiceEntries = new Dictionary<ServiceKey, ServiceRegistration>(256);
+            m_ServiceEntriesByServiceType = new Dictionary<Type, ServiceRegistration>(128);
+            m_ServiceInvokerCache = new Dictionary<Type, Func<object>>(128);
         }
 
         /// <summary>
@@ -103,6 +106,7 @@ namespace Labo.Common.Ioc.Container
                 if (m_ServiceEntriesByServiceType.TryGetValue(serviceType, out serviceRegistration))
                 {
                     serviceRegistration.ServiceInstanceCreator.Invalidate();
+                    m_ServiceInvokerCache.Remove(serviceType);
                 }
 
                 serviceRegistration = m_ServiceEntriesByServiceType[serviceType] = new ServiceRegistration(serviceType, implementationType, serviceLifetime);
@@ -175,6 +179,23 @@ namespace Labo.Common.Ioc.Container
             ServiceRegistration serviceRegistration;
             m_ServiceEntriesByServiceType.TryGetValue(serviceType, out serviceRegistration);
             return serviceRegistration;
+        }
+
+        /// <summary>
+        /// Gets the service invoker.
+        /// </summary>
+        /// <param name="serviceType">Type of the service.</param>
+        /// <returns>Service Invoker</returns>
+        public Func<object> GetServiceInvoker(Type serviceType)
+        {
+            Func<object> invoker;
+            if (!m_ServiceInvokerCache.TryGetValue(serviceType, out invoker))
+            {
+                invoker = GetServiceRegistration(serviceType).ServiceInstanceCreator.GetServiceFactory().ServiceInvokerFunc;
+                m_ServiceInvokerCache[serviceType] = invoker;
+            }
+
+            return invoker;
         }
 
         /// <summary>

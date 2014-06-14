@@ -32,6 +32,8 @@ namespace Labo.Common.Ioc.LightInject
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
+    using global::LightInject;
+
     /// <summary>
     /// LightInject inversion of control container class.
     /// </summary>
@@ -41,6 +43,10 @@ namespace Labo.Common.Ioc.LightInject
         private sealed class NullAssemblyScanner : IAssemblyScanner
         {
             public void Scan(System.Reflection.Assembly assembly, IServiceRegistry serviceRegistry, Func<ILifetime> lifetime, Func<Type, Type, bool> shouldRegister)
+            {
+            }
+
+            public void Scan(System.Reflection.Assembly assembly, IServiceRegistry serviceRegistry)
             {
             }
         }

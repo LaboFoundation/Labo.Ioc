@@ -127,5 +127,12 @@ namespace Labo.Common.Ioc.Container
         /// <param name="name">The name.</param>
         /// <returns>The service instance creator.</returns>
         ServiceInstanceCreator GetServiceCreator(Type serviceType, string name);
+
+        /// <summary>
+        /// Gets the service invoker.
+        /// </summary>
+        /// <param name="serviceType">Type of the service.</param>
+        /// <returns>Service Invoker</returns>
+        Func<object> GetServiceInvoker(Type serviceType);
     }
 }

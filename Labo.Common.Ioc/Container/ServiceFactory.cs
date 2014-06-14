@@ -28,6 +28,7 @@
 
 namespace Labo.Common.Ioc.Container
 {
+    using System;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -47,6 +48,17 @@ namespace Labo.Common.Ioc.Container
         /// The service factory compiler.
         /// </value>
         public IServiceFactoryCompiler ServiceFactoryCompiler { get; private set; }
+
+        /// <summary>
+        /// Gets service invoker function
+        /// </summary>
+        public Func<object> ServiceInvokerFunc
+        {
+            get
+            {
+                return m_ServiceFactoryInvoker.ServiceInvokerFunc;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceFactory"/> class.

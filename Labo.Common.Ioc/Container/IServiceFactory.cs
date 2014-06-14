@@ -28,6 +28,8 @@
 
 namespace Labo.Common.Ioc.Container
 {
+    using System;
+
     /// <summary>
     /// The service factory interface.
     /// </summary>
@@ -58,6 +60,11 @@ namespace Labo.Common.Ioc.Container
         /// The service factory compiler.
         /// </value>
         IServiceFactoryCompiler ServiceFactoryCompiler { get; }
+
+        /// <summary>
+        /// Gets service invoker function
+        /// </summary>
+        Func<object> ServiceInvokerFunc { get; }
 
         /// <summary>
         /// Determines whether the factory is compiled.

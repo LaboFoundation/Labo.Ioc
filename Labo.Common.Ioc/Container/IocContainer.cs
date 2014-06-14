@@ -250,7 +250,7 @@ namespace Labo.Common.Ioc.Container
         /// <returns>instance.</returns>
         public override object GetInstance(Type serviceType)
         {
-            return m_ServiceRegistrationManager.GetServiceCreator(serviceType).GetServiceInstance();
+            return m_ServiceRegistrationManager.GetServiceInvoker(serviceType)();
         }
 
         /// <summary>

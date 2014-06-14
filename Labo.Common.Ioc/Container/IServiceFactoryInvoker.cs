@@ -28,6 +28,8 @@
 
 namespace Labo.Common.Ioc.Container
 {
+    using System;
+
     /// <summary>
     /// The service factory invoker interface.
     /// </summary>
@@ -45,5 +47,10 @@ namespace Labo.Common.Ioc.Container
         /// </summary>
         /// <returns>The service instance.</returns>
         object InvokeServiceFactory();
+
+        /// <summary>
+        /// Gets service invoker function
+        /// </summary>
+        Func<object> ServiceInvokerFunc { get; }
     }
 }

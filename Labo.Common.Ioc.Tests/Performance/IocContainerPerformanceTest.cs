@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Threading;
 
+    using Labo.Common.Ioc.DryIoc;
     using Labo.Common.Ioc.Dynamo;
     using Labo.Common.Ioc.HaveBox;
     using Labo.Common.Ioc.Hiro;
@@ -204,7 +206,7 @@
                                                                                          //{ "Mugen", () => new MugenIocContainer() },
                                                                                          //{ "TinyIoc", () => new TinyIocContainer() },
                                                                                          //{ "LightCore", () => new LightCoreIocContainer() },
-                                                                                         { "Dymamo", () => new DynamoIocContainer() },
+                                                                                         { "Dynamo", () => new DynamoIocContainer() },
                                                                                          { "Hiro", () => new HiroIocContainer() },
                                                                                          { "Munq", () => new MunqIocContainer() },
                                                                                          { "LightInject", () => new LightInjectIocContainer() },
@@ -212,12 +214,14 @@
                                                                                          { "SimpleInjector", () => new SimpleInjectorIocContainer()},
                                                                                          { "Labo", () => new Container.IocContainer() },
                                                                                          { "Havebox", () => new HaveBoxIocContainer() },
-                                                                                        
+                                                                                         { "Dry", () => new DryIocContainer() },
                                                                                      };
             
         [Test]
         public void TestPerformance()
         {
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
+
             TestPerformance(
                 "Singleton;",
                 container =>
@@ -257,7 +261,7 @@
 
         private static void TestPerformance(string title, Action<IIocContainer> registerAction)
         {
-            Console.WriteLine("\n" + title);
+            Console.WriteLine("\n{0}", title);
 
             Console.Write(string.Empty.PadRight(19, ' '));
 

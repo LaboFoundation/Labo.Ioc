@@ -57,6 +57,17 @@ namespace Labo.Common.Ioc.Container
         private readonly Func<object> m_ServiceInvokerFunc;
 
         /// <summary>
+        /// Gets service invoker function
+        /// </summary>
+        public Func<object> ServiceInvokerFunc
+        {
+            get
+            {
+                return m_ServiceInvokerFunc;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TransientServiceFactoryInvoker"/> class.
         /// </summary>
         /// <param name="serviceInvokerFunc">The service invoker function.</param>

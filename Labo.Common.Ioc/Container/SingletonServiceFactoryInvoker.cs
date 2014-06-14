@@ -91,6 +91,17 @@ namespace Labo.Common.Ioc.Container
         }
 
         /// <summary>
+        /// Gets service invoker function
+        /// </summary>
+        public Func<object> ServiceInvokerFunc
+        {
+            get
+            {
+                return m_ServiceInvokerFunc;
+            }
+        }
+
+        /// <summary>
         /// Invokes the service factory.
         /// </summary>
         /// <param name="parameters">The parameters.</param>
@@ -122,7 +133,7 @@ namespace Labo.Common.Ioc.Container
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object InvokeServiceFactory()
         {
-            return m_ServiceInvokerFunc();
+            return ServiceInvokerFunc();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Labo.Common.Ioc.Dynamo
     using global::Dynamo.Ioc;
 
     /// <summary>
-    /// Catel inversion of control container class.
+    /// Dynamo inversion of control container class.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     public sealed class DynamoIocContainer : BaseIocContainer
