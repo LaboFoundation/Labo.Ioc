@@ -29,6 +29,7 @@
 namespace Labo.Common.Ioc.Container
 {
     using System;
+    using System.Collections.Generic;
     using System.Reflection;
 
     /// <summary>
@@ -80,15 +81,20 @@ namespace Labo.Common.Ioc.Container
                 }
                 else
                 {
-                    dependentServiceFactories = new IServiceFactory[constructorParametersLength];
+                    List<IServiceFactory> constructorParameterServiceFactories = new List<IServiceFactory>();
                     for (int i = 0; i < constructorParametersLength; i++)
                     {
                         ParameterInfo constructorParameter = constructorParameters[i];
 
-                        // TODO: Add dependent service instance creators instead of service factories to eliminate m_ServiceFactory.IsCompiled() check in ServiceInstanceCreator class.
-                        IServiceFactory dependentServiceFactory = serviceRegistrationManager.GetServiceCreator(constructorParameter.ParameterType).GetServiceFactory(circularDependencyValidator);
-                        dependentServiceFactories[i] = dependentServiceFactory;
+                        if (serviceRegistrationManager.IsServiceRegistered(constructorParameter.ParameterType))
+                        {
+                            // TODO: Add dependent service instance creators instead of service factories to eliminate m_ServiceFactory.IsCompiled() check in ServiceInstanceCreator class.
+                            IServiceFactory dependentServiceFactory = serviceRegistrationManager.GetServiceCreator(constructorParameter.ParameterType).GetServiceFactory(circularDependencyValidator);
+                            constructorParameterServiceFactories.Add(dependentServiceFactory);   
+                        }
                     }
+
+                    dependentServiceFactories = constructorParameterServiceFactories.ToArray();
                 }
 
                 ServiceFactoryCompilerBase serviceFactoryCompiler;
@@ -108,7 +114,7 @@ namespace Labo.Common.Ioc.Container
 
                 circularDependencyValidator.Release();
 
-                IServiceFactory serviceFactory = new ServiceFactory(serviceFactoryCompiler);
+                IServiceFactory serviceFactory = new ServiceFactory(serviceFactoryCompiler, serviceRegistration.ServiceType);
                 serviceFactoryCompiler.SetServiceFactory(serviceFactory);
                 return serviceFactory;
             }
@@ -128,7 +134,7 @@ namespace Labo.Common.Ioc.Container
 
             circularDependencyValidator.Release();
 
-            return new ServiceFactory(serviceFactoryInvoker);
+            return new ServiceFactory(serviceFactoryInvoker, serviceRegistration.ServiceType);
         }
     }
 }
