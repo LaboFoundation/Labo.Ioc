@@ -30,6 +30,8 @@ namespace Labo.Common.Ioc.Container
 {
     using System;
 
+    using Labo.Common.Ioc.Container.EventArgs;
+
     /// <summary>
     /// The service factory interface.
     /// </summary>
@@ -67,9 +69,19 @@ namespace Labo.Common.Ioc.Container
         Func<object> ServiceInvokerFunc { get; }
 
         /// <summary>
+        /// Gets the service type
+        /// </summary>
+        Type ServiceType { get; }
+
+        /// <summary>
         /// Determines whether the factory is compiled.
         /// </summary>
         /// <returns>returns <c>true</c> if factory is compiled, otherwise <c>false</c></returns>
         bool IsCompiled();
+
+        /// <summary>
+        /// Occurs when [service factory invoker invalidated].
+        /// </summary>
+        event EventHandler<ServiceFactoryInvalidatedEventArgs> OnInvalidated;
     }
 }

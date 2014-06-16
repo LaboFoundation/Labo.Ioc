@@ -31,11 +31,23 @@ namespace Labo.Common.Ioc.Container
     using System;
     using System.Runtime.CompilerServices;
 
+    using Labo.Common.Ioc.Container.EventArgs;
+
     /// <summary>
     /// The service factory class.
     /// </summary>
     internal sealed class ServiceFactory : IServiceFactory
     {
+        /// <summary>
+        /// Occurs when [service factory invoker invalidated].
+        /// </summary>
+        public event EventHandler<ServiceFactoryInvalidatedEventArgs> OnInvalidated = delegate { };
+
+        /// <summary>
+        /// The service type
+        /// </summary>
+        private readonly Type m_ServiceType;
+
         /// <summary>
         /// The service factory invoker
         /// </summary>
@@ -61,23 +73,38 @@ namespace Labo.Common.Ioc.Container
         }
 
         /// <summary>
+        /// Gets the service type
+        /// </summary>
+        public Type ServiceType
+        {
+            get
+            {
+                return m_ServiceType;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ServiceFactory"/> class.
         /// </summary>
         /// <param name="serviceFactoryInvoker">The service factory invoker.</param>
-        public ServiceFactory(IServiceFactoryInvoker serviceFactoryInvoker)
+        /// <param name="serviceType">Service type.</param>
+        public ServiceFactory(IServiceFactoryInvoker serviceFactoryInvoker, Type serviceType)
         {
             m_ServiceFactoryInvoker = serviceFactoryInvoker;
+            m_ServiceType = serviceType;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceFactory"/> class.
         /// </summary>
         /// <param name="serviceFactoryCompiler">The service factory compiler.</param>
-        public ServiceFactory(IServiceFactoryCompiler serviceFactoryCompiler)
+        /// <param name="serviceType">Service type.</param>
+        public ServiceFactory(IServiceFactoryCompiler serviceFactoryCompiler, Type serviceType)
         {
             ServiceFactoryCompiler = serviceFactoryCompiler;
 
             m_ServiceFactoryInvoker = ServiceFactoryCompiler.CreateServiceFactoryInvoker();
+            m_ServiceType = serviceType;
         }
 
         /// <summary>
@@ -85,7 +112,9 @@ namespace Labo.Common.Ioc.Container
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>The service instance.</returns>
+#if net45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public object GetServiceInstance(object[] parameters)
         {
             return m_ServiceFactoryInvoker.InvokeServiceFactory(parameters);
@@ -95,7 +124,9 @@ namespace Labo.Common.Ioc.Container
         /// Gets the service instance.
         /// </summary>
         /// <returns>The service instance.</returns>
+#if net45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public object GetServiceInstance()
         {
             return m_ServiceFactoryInvoker.InvokeServiceFactory();
@@ -109,6 +140,8 @@ namespace Labo.Common.Ioc.Container
             ServiceFactoryCompiler.Invalidate();
             ServiceFactoryCompiler = null;
             m_ServiceFactoryInvoker = null;
+
+            OnInvalidated(this, new ServiceFactoryInvalidatedEventArgs(ServiceType));
         }
 
         /// <summary>
