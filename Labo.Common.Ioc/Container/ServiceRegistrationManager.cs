@@ -106,7 +106,6 @@ namespace Labo.Common.Ioc.Container
                 if (m_ServiceEntriesByServiceType.TryGetValue(serviceType, out serviceRegistration))
                 {
                     serviceRegistration.ServiceInstanceCreator.Invalidate();
-                    m_ServiceInvokerCache.Remove(serviceType);
                 }
 
                 serviceRegistration = m_ServiceEntriesByServiceType[serviceType] = new ServiceRegistration(serviceType, implementationType, serviceLifetime);
@@ -173,7 +172,9 @@ namespace Labo.Common.Ioc.Container
         /// </summary>
         /// <param name="serviceType">Type of the service.</param>
         /// <returns>Service registration class.</returns>
+#if net45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public ServiceRegistration GetServiceRegistration(Type serviceType)
         {
             ServiceRegistration serviceRegistration;
@@ -309,7 +310,7 @@ namespace Labo.Common.Ioc.Container
         /// <param name="serviceRegistration">The service registration.</param>
         private void SetServiceInstanceCreator(ServiceRegistration serviceRegistration)
         {
-            serviceRegistration.SetServiceInstanceCreator(new ServiceInstanceCreator(this, m_ServiceFactoryBuilder, serviceRegistration));
+            serviceRegistration.SetServiceInstanceCreator(new ServiceInstanceCreator(this, m_ServiceFactoryBuilder, serviceRegistration, serviceType => m_ServiceInvokerCache.Remove(serviceType)));
         }
     }
 }
