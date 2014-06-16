@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DE2A9A58-1B61-4516-8F1E-329A3765F1D5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Labo.Common.Ioc.NET4</RootNamespace>
+    <AssemblyName>Labo.Common.Ioc.NET4</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Labo.Common.Ioc.NET4.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Labo.Common.NET4">
+      <HintPath>..\packages\Labo.Commons.0.1.3\lib\net40\Labo.Common.NET4.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Labo.Common.Ioc\BaseIocContainer.cs">
+      <Link>BaseIocContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\CircularDependencyValidator.cs">
+      <Link>Container\CircularDependencyValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\DynamicAssemblyBuilder.cs">
+      <Link>Container\DynamicAssemblyBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\DynamicAssemblyManager.cs">
+      <Link>Container\DynamicAssemblyManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\EventArgs\ServiceFactoryInvalidatedEventArgs.cs">
+      <Link>Container\EventArgs\ServiceFactoryInvalidatedEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\Exceptions\IocContainerDependencyResolutionException.cs">
+      <Link>Container\Exceptions\IocContainerDependencyResolutionException.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\Exceptions\IocContainerRegistrationException.cs">
+      <Link>Container\Exceptions\IocContainerRegistrationException.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\IDynamicAssemblyManager.cs">
+      <Link>Container\IDynamicAssemblyManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\IocContainer.cs">
+      <Link>Container\IocContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\IServiceConstructorChooser.cs">
+      <Link>Container\IServiceConstructorChooser.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\IServiceFactory.cs">
+      <Link>Container\IServiceFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\IServiceFactoryBuilder.cs">
+      <Link>Container\IServiceFactoryBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\IServiceFactoryCompiler.cs">
+      <Link>Container\IServiceFactoryCompiler.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\IServiceFactoryInvoker.cs">
+      <Link>Container\IServiceFactoryInvoker.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\IServiceRegistrationManager.cs">
+      <Link>Container\IServiceRegistrationManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceConstructorChooser.cs">
+      <Link>Container\ServiceConstructorChooser.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceFactory.cs">
+      <Link>Container\ServiceFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceFactoryBuilder.cs">
+      <Link>Container\ServiceFactoryBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceFactoryCompilerBase.cs">
+      <Link>Container\ServiceFactoryCompilerBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceFactoryCompilerHelper.cs">
+      <Link>Container\ServiceFactoryCompilerHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceInstanceCreator.cs">
+      <Link>Container\ServiceInstanceCreator.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceKey.cs">
+      <Link>Container\ServiceKey.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceLifetime.cs">
+      <Link>Container\ServiceLifetime.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceRegistration.cs">
+      <Link>Container\ServiceRegistration.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\ServiceRegistrationManager.cs">
+      <Link>Container\ServiceRegistrationManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\SingletonServiceFactoryCompiler.cs">
+      <Link>Container\SingletonServiceFactoryCompiler.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\SingletonServiceFactoryInvoker.cs">
+      <Link>Container\SingletonServiceFactoryInvoker.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\TransientServiceFactoryCompiler.cs">
+      <Link>Container\TransientServiceFactoryCompiler.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Container\TransientServiceFactoryInvoker.cs">
+      <Link>Container\TransientServiceFactoryInvoker.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Exceptions\IocContainerNotRegisteredException.cs">
+      <Link>Exceptions\IocContainerNotRegisteredException.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\IIocContainer.cs">
+      <Link>IIocContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\IIocContainerRegistrar.cs">
+      <Link>IIocContainerRegistrar.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\IIocContainerResolver.cs">
+      <Link>IIocContainerResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\IIocModule.cs">
+      <Link>IIocModule.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\IIocModuleRegistrar.cs">
+      <Link>IIocModuleRegistrar.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\IocContainer.cs">
+      <Link>IocContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Resources\Strings.Designer.cs">
+      <Link>Resources\Strings.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\Labo.Common.Ioc\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Labo.Common.Ioc\Resources\Strings.resx">
+      <Link>Resources\Strings.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
