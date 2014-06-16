@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HaveBox, Version=1.6.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="HaveBox, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\HaveBox.1.6.1\lib\net45\HaveBox.dll</HintPath>
+      <HintPath>..\packages\HaveBox.2.0.0\lib\net45\HaveBox.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

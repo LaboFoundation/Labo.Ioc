@@ -566,5 +566,33 @@
 
             Assert.AreEqual(3, iocContainer.GetInstance<I1>().Id);
         }
+
+        [Test]
+        public void A()
+        {
+            IIocContainer iocContainer = CreateContainer();
+
+            iocContainer.RegisterSingleInstance<ISingletonTransientService, SingletonTransientService>();
+            iocContainer.RegisterInstance<ITransientService>(x => new TransientService());
+
+            Assert.AreEqual(iocContainer.GetInstance<ISingletonTransientService>().Guid, iocContainer.GetInstance<ISingletonTransientService>().Guid);
+            Assert.AreEqual(iocContainer.GetInstance<ISingletonTransientService>().TransientService.Guid, iocContainer.GetInstance<ISingletonTransientService>().TransientService.Guid);
+
+            Assert.AreNotEqual(iocContainer.GetInstance<ITransientService>().Guid, iocContainer.GetInstance<ITransientService>().Guid);
+        }
+
+        [Test]
+        public void B()
+        {
+            IIocContainer iocContainer = CreateContainer();
+
+            iocContainer.RegisterInstance<ITransientSingletonService, TransientSingletonService>();
+            iocContainer.RegisterSingleInstance<ISingletonService>(x => new SingletonService());
+
+            Assert.AreNotEqual(iocContainer.GetInstance<ITransientSingletonService>().Guid, iocContainer.GetInstance<ITransientSingletonService>().Guid);
+            Assert.AreEqual(iocContainer.GetInstance<ITransientSingletonService>().SingletonService.Guid, iocContainer.GetInstance<ITransientSingletonService>().SingletonService.Guid);
+
+            Assert.AreEqual(iocContainer.GetInstance<ISingletonService>().Guid, iocContainer.GetInstance<ISingletonService>().Guid);
+        }
     }
 }

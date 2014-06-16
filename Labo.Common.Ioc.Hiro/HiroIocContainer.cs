@@ -33,6 +33,7 @@ namespace Labo.Common.Ioc.Hiro
     using System.Diagnostics.CodeAnalysis;
 
     using global::Hiro;
+
     using global::Hiro.Containers;
 
     /// <summary>

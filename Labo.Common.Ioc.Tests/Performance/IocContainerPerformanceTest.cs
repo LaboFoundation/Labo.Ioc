@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Threading;
 
     using Labo.Common.Ioc.DryIoc;
@@ -195,7 +196,7 @@
             }
         }
 
-        private static readonly List<long> s_BatchIterations = new List<long> { 1000, 5000, 20000, 100000, 250000, 1000000, 2500000 };
+        private static readonly HashSet<long> s_BatchIterations = new HashSet<long>() { 1000, 5000, 20000, 100000, 250000, 1000000, 2500000 };
         private static readonly Dictionary<string, Func<IIocContainer>> s_Containers = new Dictionary<string, Func<IIocContainer>>
                                                                                      {
                                                                                          { "Null", () => new NullContainer() },
@@ -263,9 +264,12 @@
         {
             Console.WriteLine("\n{0}", title);
 
-            Console.Write(string.Empty.PadRight(19, ' '));
+            Console.Write(string.Empty.PadRight(21, ' '));
 
-            s_BatchIterations.ForEach(x => Console.Write(x.ToStringInvariant().PadRight(20, ' ')));
+            s_BatchIterations.ForEach(x => Console.Write(x.ToStringInvariant().PadRight(22, ' ')));
+                
+            List<PerformanceResult> performanceResults = new List<PerformanceResult>();
+            List<string> containers = new List<string>();
 
             foreach (KeyValuePair<string, Func<IIocContainer>> containerEntry in s_Containers)
             {
@@ -273,7 +277,7 @@
 
                 registerAction(container);
 
-                Console.Write(string.Format("\n{0}", containerEntry.Key).PadRight(20, ' '));
+                containers.Add(string.Format("\n{0}", containerEntry.Key).PadRight(22, ' '));
 
                 s_BatchIterations.ForEach(
                     x =>
@@ -284,15 +288,52 @@
                             //warm up
                             container.GetInstance<IApplication>();
 
-                            Console.Write(
-                                MeasurePerformance(() => container.GetInstance<IApplication>(), x)
-                                    .ToStringInvariant()
-                                    .PadRight(20, ' '));
+                            PerformanceResult performanceResult = MeasurePerformance(() => container.GetInstance<IApplication>(), x);
+                            performanceResult.IterationCount = x;
+                            performanceResults.Add(performanceResult);
                         });
+            }
+
+            int batchIterationsCount = s_BatchIterations.Count;
+
+            for (int i = 0; i < performanceResults.Count; i++)
+            {
+                if (i % batchIterationsCount == 0)
+                {
+                    Console.Write(i == 0 ? containers[i] : containers[i / batchIterationsCount]);
+                }
+
+                PerformanceResult performanceResult = performanceResults[i];
+                long[] allPerformanceResults = performanceResults.Where(x => x.IterationCount == performanceResult.IterationCount).Select(x => x.Performance).ToArray();
+                Console.Write(string.Format("{0} ({1})", performanceResult.Text, performanceResult.GetPerformanceOrder(allPerformanceResults)).PadRight(22, ' '));
             }
         }
 
-        private static string MeasurePerformance(Action action, decimal iterations)
+        private struct PerformanceResult
+        {
+            public long IterationCount { get; set; }
+
+            public string Text { get; set; }
+
+            public long Performance { get; set; }
+
+            public int GetPerformanceOrder(IList<long> allPerformanceResults)
+            {
+                allPerformanceResults = allPerformanceResults.OrderBy(x => x).ToList();
+
+                for (int i = 0; i < allPerformanceResults.Count; i++)
+                {
+                    if (Performance == allPerformanceResults[i])
+                    {
+                        return i + 1;
+                    }
+                }
+
+                return 0;
+            }
+        }
+
+        private static PerformanceResult MeasurePerformance(Action action, decimal iterations)
         {
             GC.Collect();
             
@@ -308,7 +349,11 @@
 
             long performance = stopwatch.ElapsedTicks;
 
-            return string.Format("{0} ({1})", performance.ToStringInvariant(), (performance / iterations).ToStringInvariant());
+            return new PerformanceResult
+                       {
+                           Text = string.Format("{0} ({1})", performance.ToStringInvariant(), (performance / iterations).ToStringInvariant()),
+                           Performance = performance
+                       };
         }
     }
 }
