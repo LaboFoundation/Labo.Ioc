@@ -60,7 +60,7 @@ namespace Labo.Common.Ioc.Container
         /// <summary>
         /// The service invoker function lazy initializer
         /// </summary>
-        private readonly Lazy<object> m_ServiceInvokerFuncLazyInitializer; 
+        private readonly Lazy<object> m_ServiceInvokerFuncLazyInitializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SingletonServiceFactoryInvoker"/> class.
@@ -106,7 +106,9 @@ namespace Labo.Common.Ioc.Container
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>The service instance.</returns>
+#if net45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public object InvokeServiceFactory(object[] parameters)
         {
             if (parameters == null)
@@ -130,7 +132,9 @@ namespace Labo.Common.Ioc.Container
         /// Invokes the service factory.
         /// </summary>
         /// <returns>The service instance.</returns>
+#if net45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public object InvokeServiceFactory()
         {
             return ServiceInvokerFunc();
