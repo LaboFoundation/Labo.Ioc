@@ -28,6 +28,7 @@
 
 namespace Labo.Common.Ioc.Container
 {
+    using System;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -49,7 +50,12 @@ namespace Labo.Common.Ioc.Container
         /// The service registration
         /// </summary>
         private readonly ServiceRegistration m_ServiceRegistration;
-        
+
+        /// <summary>
+        /// On service factory invalidated action.
+        /// </summary>
+        private readonly Action<Type> m_OnServiceFactoryInvalidated;
+
         /// <summary>
         /// The service factory
         /// </summary>
@@ -61,11 +67,13 @@ namespace Labo.Common.Ioc.Container
         /// <param name="serviceRegistrationManager">The service registration manager.</param>
         /// <param name="serviceFactoryBuilder">The service factory builder.</param>
         /// <param name="serviceRegistration">The service registration.</param>
-        public ServiceInstanceCreator(IServiceRegistrationManager serviceRegistrationManager, IServiceFactoryBuilder serviceFactoryBuilder, ServiceRegistration serviceRegistration)
+        /// <param name="onServiceFactoryInvalidated">On service factory invalidated action.</param>
+        public ServiceInstanceCreator(IServiceRegistrationManager serviceRegistrationManager, IServiceFactoryBuilder serviceFactoryBuilder, ServiceRegistration serviceRegistration, Action<Type> onServiceFactoryInvalidated)
         {
             m_ServiceRegistrationManager = serviceRegistrationManager;
             m_ServiceFactoryBuilder = serviceFactoryBuilder;
             m_ServiceRegistration = serviceRegistration;
+            m_OnServiceFactoryInvalidated = onServiceFactoryInvalidated;
         }
 
         /// <summary>
@@ -73,7 +81,9 @@ namespace Labo.Common.Ioc.Container
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>The service instance.</returns>
+#if net45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public object GetServiceInstance(object[] parameters)
         {
             return GetServiceFactory().GetServiceInstance(parameters);
@@ -83,7 +93,9 @@ namespace Labo.Common.Ioc.Container
         /// Gets the service instance.
         /// </summary>
         /// <returns>The service instance.</returns>
+#if net45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public object GetServiceInstance()
         {
             return GetServiceFactory().GetServiceInstance();
@@ -107,7 +119,9 @@ namespace Labo.Common.Ioc.Container
         /// <returns>
         /// The service factory.
         /// </returns>
+#if net45
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public IServiceFactory GetServiceFactory()
         {
             if (m_ServiceFactory != null && m_ServiceFactory.IsCompiled())
@@ -117,7 +131,8 @@ namespace Labo.Common.Ioc.Container
 
             using (CircularDependencyValidator circularDependencyValidator = new CircularDependencyValidator())
             {
-                return m_ServiceFactory = m_ServiceFactoryBuilder.BuildServiceFactory(m_ServiceRegistrationManager, m_ServiceRegistration, circularDependencyValidator);
+                InvokeServiceFactory(circularDependencyValidator);
+                return m_ServiceFactory;
             }
         }
 
@@ -135,7 +150,24 @@ namespace Labo.Common.Ioc.Container
                 return m_ServiceFactory;
             }
 
-            return m_ServiceFactory = m_ServiceFactoryBuilder.BuildServiceFactory(m_ServiceRegistrationManager, m_ServiceRegistration, circularDependencyValidator);
+            InvokeServiceFactory(circularDependencyValidator);
+            return m_ServiceFactory;
+        }
+
+        /// <summary>
+        /// Invokes the service factory.
+        /// </summary>
+        /// <param name="circularDependencyValidator">The circular dependency validator.</param>
+        private void InvokeServiceFactory(CircularDependencyValidator circularDependencyValidator)
+        {
+            m_ServiceFactory = m_ServiceFactoryBuilder.BuildServiceFactory(m_ServiceRegistrationManager, m_ServiceRegistration, circularDependencyValidator);
+            m_ServiceFactory.OnInvalidated += (sender, args) =>
+            {
+                if (m_OnServiceFactoryInvalidated != null)
+                {
+                    m_OnServiceFactoryInvalidated(args.ServiceType);
+                }
+            };
         }
     }
 }
