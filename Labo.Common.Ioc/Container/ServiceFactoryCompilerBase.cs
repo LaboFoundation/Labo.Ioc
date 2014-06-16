@@ -132,7 +132,11 @@ namespace Labo.Common.Ioc.Container
             for (int i = 0; i < DependentServiceFactories.Length; i++)
             {
                 IServiceFactory dependentServiceFactory = DependentServiceFactories[i];
-                dependentServiceFactory.ServiceFactoryCompiler.ParentFactories.Add(serviceFactory);
+                IServiceFactoryCompiler serviceFactoryCompiler = dependentServiceFactory.ServiceFactoryCompiler;
+                if (serviceFactoryCompiler != null)
+                {
+                    serviceFactoryCompiler.ParentFactories.Add(serviceFactory);                    
+                }
             }
         }
 
