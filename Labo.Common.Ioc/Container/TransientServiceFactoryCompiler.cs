@@ -99,8 +99,16 @@ namespace Labo.Common.Ioc.Container
             {
                 IServiceFactory dependentServiceFactory = DependentServiceFactories[i];
                 IServiceFactoryCompiler dependentServiceFactoryCompiler = dependentServiceFactory.ServiceFactoryCompiler;
-                dependentServiceFactoryCompiler.CompileServiceFactory();
-                dependentServiceFactoryCompiler.EmitServiceFactoryCreatorMethod(createInstanceMethodIlGenerator);
+
+                if (dependentServiceFactoryCompiler != null)
+                {
+                    dependentServiceFactoryCompiler.CompileServiceFactory();
+                    dependentServiceFactoryCompiler.EmitServiceFactoryCreatorMethod(createInstanceMethodIlGenerator);
+                }
+                else
+                {
+                    ServiceFactoryCompilerHelper.EmitServiceInvokerFunc(dependentServiceFactory, createInstanceMethodIlGenerator, m_DynamicAssemblyBuilder);
+                }
             }
 
             EmitHelper.Newobj(createInstanceMethodIlGenerator, m_ServiceConstructor);
