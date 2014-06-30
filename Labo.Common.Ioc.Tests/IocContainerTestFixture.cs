@@ -568,7 +568,7 @@
         }
 
         [Test]
-        public void A()
+        public void RegisterSingletonTransientServiceTransientServiceIsLambda()
         {
             IIocContainer iocContainer = CreateContainer();
 
@@ -582,7 +582,7 @@
         }
 
         [Test]
-        public void B()
+        public void RegisterTransientSingletonServiceSingletonServiceIsLambda()
         {
             IIocContainer iocContainer = CreateContainer();
 
